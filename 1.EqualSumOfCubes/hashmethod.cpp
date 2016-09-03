@@ -4,13 +4,11 @@
 #include <iostream>
 #include <list>
 #include <math.h>
-#include <iomanip>
 
 using namespace std;
 
 int main() 
 {
-
 	//map result to pair of integers
     unordered_map <int, list< pair<int, int> > > resultToListofPairs;
 
@@ -34,12 +32,13 @@ int main()
     for( auto it = resultToListofPairs.begin(); it != resultToListofPairs.end(); it++){
 
     	//store each list as a local variable
-    	list<pair<int,int>> mylist = it->second;
+    	list<pair<int,int>> pairlist = it->second;
 
     	//print all unique pairs of ab and cd
-    	for(list<pair<int,int>>::iterator it1 = mylist.begin(); it1 != mylist.end(); it1++){
-    		for(list<pair<int,int>>::iterator it2 = mylist.begin(); it2 != mylist.end(); it2++){
+    	for(auto it1 = pairlist.begin(); it1 != pairlist.end(); it1++){
+    		for(auto it2 = pairlist.begin(); it2 != pairlist.end(); it2++){
     			if(it1->first != it2->first && it1->first != it2->second){
+    				//print right justified
     				printf("%4d %4d %4d %4d \n", it1->first, it1->second, it2->first, it2->second);
     			}
     		}
@@ -50,7 +49,12 @@ int main()
 
 }
 
-// also works using auto iterator
-//    	for(auto it1 = mylist.begin(); it1 != mylist.end(); it1++){
-//    		for(auto it2 = mylist.begin(); it2 != mylist.end(); it2++){
-
+		// Formal iterator
+    	// //print all unique pairs of ab and cd
+    	// for(list<pair<int,int>>::iterator it1 = mylist.begin(); it1 != mylist.end(); it1++){
+    	// 	for(list<pair<int,int>>::iterator it2 = mylist.begin(); it2 != mylist.end(); it2++){
+    	// 		if(it1->first != it2->first && it1->first != it2->second){
+    	// 			printf("%4d %4d %4d %4d \n", it1->first, it1->second, it2->first, it2->second);
+    	// 		}
+    	// 	}
+    	// }
