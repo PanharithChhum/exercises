@@ -1,8 +1,0 @@
-1. Equal Sum of Cubes
-
-Find all values for a, b, c, and d for a^3 + b^3 = c^3 + d^3
-
-Implemented brute force approach with O(N^4)
-
-TODO
-Optimize to N^2 by storing c^3 + d^3 sum as a hash table (result -> pair)
