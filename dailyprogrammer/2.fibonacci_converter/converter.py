@@ -1,16 +1,21 @@
+#challenge #282 found here 
+# https://www.reddit.com/r/dailyprogrammer/comments/5196fi/20160905_challenge_282_easy_unusual_bases/
+
 import sys
 fibarr = []
 
+#create list of fib numbers up to or equal to num
 def fib(num):
 	a, b = 0, 1
 	fibarr.append(b)
 	while True:
 		a,b = b, a + b
-		if b < num:
+		if b <= num:
 			fibarr.append(b)
 		else:
 			break
 
+#create list of fib numbers up to nth fib number
 def nthfib(num):
 	a, b = 0, 1
 	fibarr.append(b)
@@ -23,17 +28,20 @@ def nthfib(num):
 			fibarr.append(b)
 			length = length + 1
 
+#conver num to base fibonacci
 def num_to_fib(num):
 	total = 0
 	fib(num)
+	result = ""
 	for fib_num in reversed(fibarr):
 		if fib_num + total <= num:
 			total = total + fib_num
-			sys.stdout.write('1')
+			result += '1'
 		else:
-			sys.stdout.write('0')
-	print '\n'
+			result += '0'
+	print result
 
+#convert base fibonacci to number
 def fib_to_num(num):
 	total = 0
 	nthfib(len(str(num)))
@@ -44,17 +52,11 @@ def fib_to_num(num):
 	print total
 
 
-def convert(base, num):
-	if base == 10:
-		num_to_fib(num)
-	else:
-		fib_to_num(num)
-
-# convert(10,16)
-# convert(10,32)
-# convert(10,9024720)
-convert(1,10)
-convert(1,1)
-convert(1,111111)
-convert(1,100000)
-convert(1,10110110100111001)
+num_to_fib(16)
+num_to_fib(32)
+num_to_fib(9024720)
+fib_to_num(10)
+fib_to_num(1)
+fib_to_num(111111)
+fib_to_num(100000)
+fib_to_num(10110110100111001)
