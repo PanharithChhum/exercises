@@ -10,7 +10,7 @@ def generate_grid():
 		grid.append(line)
 	return grid
 
-def check_win(grid):
+def check_win(grid, outcome, x1, y1, x2, y2):
 	length = len(grid)
 	winners = []
 
@@ -19,10 +19,8 @@ def check_win(grid):
 		win = True
 		row_char = grid[i][0]
 		for j in range(length):
-			# print "grid[",i,"][",j,"] is ", grid[i][j]
 			if grid[i][j] != row_char or grid[i][j] == '_':
 				win = False
-		# print win
 		if win == True:
 			winners.append(row_char)
 
@@ -31,10 +29,8 @@ def check_win(grid):
 		win = True
 		col_char = grid[0][i]
 		for j in range(length):
-			# print "grid[",i,"][",j,"] is ", grid[j][i]
 			if grid[j][i] != col_char or grid[j][i] == '_':
 				win = False
-		# print win
 		if win == True:
 			winners.append(col_char)
 
@@ -56,93 +52,75 @@ def check_win(grid):
 	if win == True:
 		winners.append(corner)
 
-	#return output
+	#output
 	if not winners:
-		return 'n' #no winning move
+		return
 	if all(x == winners[0] for x in winners) == True:
-		return winners[0] #winning character
+		win = [winners[0], x1, y1, x2, y2]
+		if win not in outcome:
+			outcome.append(win)
 	else:
-		return 'd'	#draw
+		draw = ['d', x1, y1, x2, y2]
+		if draw not in outcome:
+			outcome.append(draw)
 
+#prints formatted grid for debugging
 def print_grid(grid):
 	for x in grid:
 		print x
 	print "\n"
 
-#check win without blank tiles too!!!
-def check_blank_tiles(grid, x1, y1, x2, y2, outcome):
-	if check_win(grid) == 'x':
-		outcome.append(['x', x1, y1, x2, y2])
-	if check_win(grid) == 'o':
-		outcome.append(['o', x1, y1, x2, y2])
-	if check_win(grid) == 'd':
-		outcome.append(['d', x1, y1, x2, y2])
+#analyzes board for win and accounts for blank tiles
+def analyze_board(grid, x1, y1, x2, y2, outcome):
 		
-	print "x1:", x1, " y1:", y1, " x2:", x2, " y2", y2
-	print "tile is ", grid[y2][x2]
+	check_win(grid, outcome, x1, y1, x2, y2)
 	tile = grid[y2][x2]
 	if tile == '_':
 		grid[y2][x2] = 'x'
-		if check_win(grid) == 'x':
-			outcome.append(['x', x1, y1, x2, y2])
+		check_win(grid, outcome, x1, y1, x2, y2)
 		grid[y2][x2] = 'o'
-		if check_win(grid) == 'o':
-			outcome.append(['o', x1, y1, x2, y2])
-		if check_win(grid) == 'd':
-			outcome.append(['d', x1, y1, x2, y2])
-	print outcome
+		check_win(grid, outcome, x1, y1, x2, y2)
 
 def shift(grid, y, x, direction, outcome):
 	length = len(grid)
 	tile = grid[y][x]
-	temp = 0
-	print "tile is ", tile
-	# if direction == "left":
-	# 	copy_grid = deepcopy(grid)
-	# 	print "goin left"
-	# 	for i in range(x, length - 1):
-	# 		print y, i, copy_grid[y][i], " gets ", y, i + 1, copy_grid[y][i + 1]
-	# 		copy_grid[y][i] = copy_grid[y][i + 1]
-	# 	copy_grid[y][length - 1] = tile
-	# 	print_grid(copy_grid)
-	# 	check_blank_tiles(copy_grid, x, y, length - 1, y, outcome)
-	# if direction == "right":
-	# 	copy_grid = deepcopy(grid)
-	# 	print "goin right"
-	# 	for i in reversed(range(1, x + 1)):
-	# 		print y, i, copy_grid[y][i], " gets ", y, i-1, copy_grid[y][i - 1]
-	# 		copy_grid[y][i] = copy_grid[y][i - 1]
-	# 	copy_grid[y][0] = tile
-	# 	print_grid(copy_grid)
-	# 	check_blank_tiles(copy_grid, x, y, 0, y, outcome)
-	# if direction == "up":
-	# 	print "goin up"
-	# 	copy_grid = deepcopy(grid)
-	# 	for i in range(y, length - 1):
-	# 		print i, x, copy_grid[i][x], " gets ", i + 1, x, copy_grid[i+1][x]
-	# 		copy_grid[i][x] = copy_grid[i + 1][x]
-	# 	copy_grid[length - 1][x] = tile
-	# 	print_grid(copy_grid)
-	# 	check_blank_tiles(copy_grid, x, y, x, length - 1, outcome)
-	# 	print outcome
+
+	if direction == "left":
+		copy_grid = deepcopy(grid)
+		for i in range(x, length - 1):
+			copy_grid[y][i] = copy_grid[y][i + 1]
+		copy_grid[y][length - 1] = tile
+		analyze_board(copy_grid, x, y, length - 1, y, outcome)
+	
+	if direction == "right":
+		copy_grid = deepcopy(grid)
+		for i in reversed(range(1, x + 1)):
+			copy_grid[y][i] = copy_grid[y][i - 1]
+		copy_grid[y][0] = tile
+		analyze_board(copy_grid, x, y, 0, y, outcome)
+	
+	if direction == "up":
+		copy_grid = deepcopy(grid)
+		for i in range(y, length - 1):
+			copy_grid[i][x] = copy_grid[i + 1][x]
+		copy_grid[length - 1][x] = tile
+		analyze_board(copy_grid, x, y, x, length - 1, outcome)
+	
 	if direction == "down":
-		print "goin down"
 		copy_grid = deepcopy(grid)
 		for i in reversed(range(1, y + 1)):
 			copy_grid[i][x] = copy_grid[i-1][x]
 		copy_grid[0][x] = tile
-		print_grid(copy_grid)
-		check_blank_tiles(copy_grid, x, y, x, 0, outcome)
+		analyze_board(copy_grid, x, y, x, 0, outcome)
 
-def search_moves(grid, i, j,):
-	winning_moves = []
+def search_moves(grid, i, j, winning_moves):
 	length = len(grid)
-	# if j < length - 1:
-	# 	shift(grid, i, j, "left", winning_moves)
-	# if j > 0:
-	# 	shift(grid, i, j, "right", winning_moves)
-	# if i < length - 1:
-	# 	shift(grid, i, j, "up", winning_moves)
+	if j < length - 1:
+		shift(grid, i, j, "left", winning_moves)
+	if j > 0:
+		shift(grid, i, j, "right", winning_moves)
+	if i < length - 1:
+		shift(grid, i, j, "up", winning_moves)
 	if i > 0:
 		shift(grid, i, j, "down", winning_moves)
 
@@ -150,11 +128,13 @@ def search_moves(grid, i, j,):
 
 
 def brute_force(grid):
+	winning_moves = []
 	length = len(grid)
 	for i in range(length):
 		for j in range(length):
 			if i == 0 or j == 0 or i == length - 1 or j == length - 1:
-				return search_moves(grid, i, j)
+				search_moves(grid, i, j, winning_moves)
+	return winning_moves
 
 def print_formatted(winning_moves):
 	for move in winning_moves:
@@ -163,11 +143,7 @@ def print_formatted(winning_moves):
 
 def solve_quixo():
 	grid = generate_grid()
-	print_grid(grid)
-	# print check_win(grid)
-	search_moves(grid, 4, 4)
-	# winning_moves = brute_force(grid)
-	# print_formatted(winning_moves)
+	winning_moves = brute_force(grid)
+	print_formatted(winning_moves)
 
 solve_quixo()
-
